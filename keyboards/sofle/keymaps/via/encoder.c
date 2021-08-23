@@ -18,20 +18,59 @@
 //Setting up what encoder rotation does. If your encoder can be pressed as a button, that function can be set in Via.
 
 #ifdef ENCODER_ENABLE
+bool shift_held = false;
+static uint16_t held_shift = 0;
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
     if (index == 0) {
-        if (clockwise) {
-            tap_code(KC_VOLU);
-        } else {
-            tap_code(KC_VOLD);
-        }
-    } else if (index == 1) {
-        if (clockwise) {
-            tap_code(KC_PGDOWN);
-        } else {
-            tap_code(KC_PGUP);
-        }
+        switch (get_highest_layer(layer_state)) {
+				case 0:
+                    if (clockwise) {
+                        tap_code(KC_WH_D);
+                    } else {
+                        tap_code(KC_WH_U);
+                    }
+				break;
+			    case 3:
+                    if (clockwise) {
+                        tap_code16(C(KC_RGHT));
+                    } else {
+                        tap_code16(C(KC_LEFT));
+                    }
+                break;
+			default:
+                if (clockwise) {
+                    tap_code(KC_PGDN);
+                } else {
+                    tap_code(KC_PGUP);
+                }
+				break;
+		}
+
+		} else if (index == 1) {
+			switch (get_highest_layer(layer_state)) {
+				case 0:
+                    if (clockwise) {
+                        tap_code(KC_VOLU);
+                    } else {
+                        tap_code(KC_VOLD);
+                    }
+				break;
+			    case 2:
+					if (clockwise) {
+                        tap_code16(C(KC_TAB));
+                    } else {
+                        tap_code16(S(C(KC_TAB)));
+                    }
+				break;
+			    default:
+					if (clockwise) {
+                        tap_code(KC_PGDN);
+                    } else {
+                        tap_code(KC_PGUP);
+                    }
+				break;
+		}
     }
     return true;
 }
